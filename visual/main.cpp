@@ -5,14 +5,44 @@
 #include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <time.h>
+#include <utility>
+#include <vector>
+using namespace std;
 
 
 void display(void);
 void reshape(int,int);
 
+typedef pair<float,float> pff;
+typedef vector<vector<pff> > frame;
+
+int frameCount;
+int width,height;
+vector<frame> positions;
+
+void loadData(string filePath)
+{
+	FILE* fp = fopen(filePath.c_str(),"r");
+	fscanf(fp,"%d",&frameCount);
+	fscanf(fp,"%d",&width);
+	fscanf(fp,"%d",&height);
+	fclose(fp);
+}
+
 int main(int argc, char**argv)
 {
+	if (argc<2)
+	{
+		printf("Usage: clothV <inputFile>\n\ninputFile: The file to visualise\n");
+		exit(0);
+	}
+	string inpFlName (argv[1]);
+	loadData(inpFlName);
+	printf("Number of frames : %d\n",frameCount);
+	printf("Size of grid: %dx%d\n",width,height);
+
 	srand(0);
 	
 	glutInit(&argc,argv);
