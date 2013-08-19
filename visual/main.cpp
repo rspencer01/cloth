@@ -19,8 +19,11 @@ typedef pair<float,float> pff;
 typedef vector<vector<pff> > frame;
 
 int frameCount;
+int currFrame;
 int width,height;
-vector<frame> positions;
+vector<vector<pff> > positions;
+
+clock_t lastUpdate;
 
 void loadData(string filePath)
 {
@@ -28,7 +31,32 @@ void loadData(string filePath)
 	fscanf(fp,"%d",&frameCount);
 	fscanf(fp,"%d",&width);
 	fscanf(fp,"%d",&height);
+	for (int i = 0;i<frameCount;i++)
+	{
+		vector<pff> temp;
+		for (int h = 0;h<height*width;h++)
+		{
+			pff t;
+			fscanf(fp,"%f %f",&t.first,&t.second);
+			temp.push_back(t);
+		}
+		positions.push_back(temp);
+	}
 	fclose(fp);
+}
+
+pff getPosition(int x,int y, int f)
+{
+	return positions[f][x*width+y];
+}
+
+void drawLine(pff from, pff to)
+{
+  glLineWidth(0.5);
+  glBegin(GL_LINES);
+  glVertex3f(from.first, from.second, 0.0);
+  glVertex3f(to.first, to.second, 0);
+  glEnd();
 }
 
 int main(int argc, char**argv)
@@ -53,23 +81,19 @@ int main(int argc, char**argv)
 	glutCreateWindow("Terrain");
 	
 
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
 	glEnable ( GL_COLOR_MATERIAL ) ;
 	glEnable( GL_TEXTURE_2D );
 	glEnable( GL_BLEND );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-    glAlphaFunc ( GL_GREATER, (GLclampf)0.1 ) ;
-    glEnable ( GL_ALPHA_TEST ) ;
 	
 	glShadeModel(GL_SMOOTH);
 
 	glutDisplayFunc(display);
 	glutIdleFunc(display);
 	glutReshapeFunc(reshape);
+
+	currFrame = 0;
+	lastUpdate = clock();
 
 	glutMainLoop();
 }
@@ -80,11 +104,35 @@ void display(void)
 	
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
+	glMatrixMode(GL_PROJECTION);
+
 	glLoadIdentity();
+
+	glOrtho(-1,1,-1,1,-1,1);
 	
 	glMatrixMode(GL_MODELVIEW);
-	
+
+	glLoadIdentity();
+
+	for (int i = 0;i<width;i++)
+	{
+		for (int j = 0;j<height-1;j++)
+		{
+			drawLine(getPosition(i,j,currFrame),getPosition(i,j+1,currFrame));
+		}
+	}
+
 	glutSwapBuffers();
+
+	clock_t nw = clock();
+	float diff = (((float)nw - (float)lastUpdate) / 1000000.0F ) * 1000;   
+	if (diff>1.0/24)
+	{
+		currFrame++;
+		currFrame%=frameCount;
+		lastUpdate = nw;
+		printf("%d\n",currFrame);
+	}
 }
 
 void reshape(int width,int height)
