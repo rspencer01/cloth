@@ -1,0 +1,6 @@
+All inputs should follow the following format:
+
+line 1   :  Number of frames
+line 2   :  Rectangle width
+line 3   :  Rectangle height
+line 4.. :  Data, space separated.  X then Y for each point
