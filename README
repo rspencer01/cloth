@@ -1,0 +1,4 @@
+Cloth
+-----
+
+Simulates a cloth of particles under rigid physics.  Split into two parts, the simulator and the visualiser.
