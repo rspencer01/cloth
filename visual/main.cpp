@@ -34,10 +34,12 @@ void loadData(string filePath)
 	for (int i = 0;i<frameCount;i++)
 	{
 		vector<pff> temp;
+		temp.clear();
 		for (int h = 0;h<height*width;h++)
 		{
-			pff t;
-			fscanf(fp,"%f %f",&t.first,&t.second);
+			pff t = make_pair(-1,-1);
+			fscanf(fp,"%f %f ",&t.first,&t.second);
+			printf("%f %f\n",t.first,t.second);
 			temp.push_back(t);
 		}
 		positions.push_back(temp);
@@ -47,15 +49,15 @@ void loadData(string filePath)
 
 pff getPosition(int x,int y, int f)
 {
-	return positions[f][x*width+y];
+	return positions[f][y*width+x];
 }
 
 void drawLine(pff from, pff to)
 {
   glLineWidth(0.5);
   glBegin(GL_LINES);
-  glVertex3f(from.first, from.second, 0.0);
-  glVertex3f(to.first, to.second, 0);
+  glVertex3f(from.second, from.first, 0.0);
+  glVertex3f(to.second, to.first, 0);
   glEnd();
 }
 
@@ -126,7 +128,7 @@ void display(void)
 
 	clock_t nw = clock();
 	float diff = (((float)nw - (float)lastUpdate) / 1000000.0F ) * 1000;   
-	if (diff>1.0/24)
+	if (diff>1000.0/24)
 	{
 		currFrame++;
 		currFrame%=frameCount;
