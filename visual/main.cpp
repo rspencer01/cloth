@@ -39,7 +39,6 @@ void loadData(string filePath)
 		{
 			pff t = make_pair(-1,-1);
 			fscanf(fp,"%f %f ",&t.first,&t.second);
-			printf("%f %f\n",t.first,t.second);
 			temp.push_back(t);
 		}
 		positions.push_back(temp);
