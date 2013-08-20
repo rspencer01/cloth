@@ -42,8 +42,16 @@ void closeFile()
 void writeHeader()
 {
   fprintf(fp,"%d\n",FRAME_COUNT);
-  fprintf(fp,"%d\n",WIDTH);
-  fprintf(fp,"%d\n",HEIGHT);
+  fprintf(fp,"%d\n",WIDTH*HEIGHT);
+  fprintf(fp,"%d\n",(WIDTH)*(HEIGHT-1) + (WIDTH-1)*(HEIGHT));
+  for (int i = 1;i<HEIGHT;i++)
+    for (int j = 0;j<WIDTH;j++)
+      fprintf(fp,"%d %d ",(i-1)*WIDTH+j,i*WIDTH+j);
+  for (int i = 0;i<HEIGHT;i++)
+    for (int j = 1;j<WIDTH;j++)
+      fprintf(fp,"%d %d ",i*WIDTH+j,i*WIDTH+j-1);
+  fprintf(fp,"\n");
+
 }
 
 void initialiseFrame()
