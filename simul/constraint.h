@@ -8,6 +8,7 @@ class constraint
     pointMass* pointB;
     float length;
     float k;
+    bool broken;
   public:
     constraint(pointMass*,pointMass*,float,float);
     void enforce();

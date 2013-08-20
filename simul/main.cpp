@@ -27,7 +27,7 @@ typedef vector<vector<pointMass> > frame;
 FILE* fp;
 frame currFrame;
 vector<constraint> springs;
-sphere sph (vector2D(-1,0.4),0.1);
+sphere sph (vector2D(-1,-0.1),0.1);
 
 void openFile()
 {
@@ -140,7 +140,7 @@ int main(int argc, char**argv)
     resolveSphere();
     // We do this because the sphere may have thown off some things
     updateVelocities();
-    sph.centre = sph.centre + vector2D(0.004,0.00001);
+    sph.centre = sph.centre + vector2D(0.005,0.001);
   }
   closeFile();
 }
