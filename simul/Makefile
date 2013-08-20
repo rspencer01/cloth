@@ -1,2 +1,2 @@
-all: main.o vector2d.o
-	g++ main.o vector2d.o -o a
+all: main.o vector2d.o pointMass.o
+	g++ main.o vector2d.o pointMass.o -o a
