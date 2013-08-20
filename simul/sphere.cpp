@@ -1,14 +1,14 @@
 #include "sphere.h"
 
-sphere::sphere(vector2D pos, float r)
+sphere::sphere(vector3D pos, float r)
 {
   centre = pos;
   radius = r;
 }
 
-vector2D sphere::resolve(vector2D x)
+vector3D sphere::resolve(vector3D x)
 {
-  vector2D diff = x-centre;
+  vector3D diff = x-centre;
   if (diff.mag()>radius)
     return x;
   return centre + diff*(radius/diff.mag());

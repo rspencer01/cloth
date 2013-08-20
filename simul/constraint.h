@@ -1,4 +1,6 @@
-#include "vector2d.h"
+#ifndef CONSTRAINT_H
+#define CONSTRAINT_H
+#include "vector3d.h"
 #include "pointMass.h"
 
 class constraint
@@ -13,3 +15,4 @@ class constraint
     constraint(pointMass*,pointMass*,float,float);
     void enforce();
 };
+#endif

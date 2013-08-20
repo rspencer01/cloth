@@ -1,18 +1,18 @@
 #ifndef POINTMASS_H
 #define POINTMASS_H
 
-#include "vector2d.h"
+#include "vector3d.h"
 class pointMass
 {
   private:
-    vector2D velocity;
-    vector2D acceleration;
-    vector2D lastPosition;
+    vector3D velocity;
+    vector3D acceleration;
+    vector3D lastPosition;
   public:
-    vector2D position;
-    pointMass(vector2D);
+    vector3D position;
+    pointMass(vector3D);
     pointMass();
-    void addForce(vector2D);
+    void addForce(vector3D);
     void updatePosition(float);
     void addFriction(float);
     void updateMomentum(float);

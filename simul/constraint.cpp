@@ -14,12 +14,12 @@ void constraint::enforce()
 {
   if (broken)
     return;
-  vector2D diff = pointA->position-pointB->position;
+  vector3D diff = pointA->position-pointB->position;
   if (diff.mag()<length)
     return;
   diff = diff - diff * (length/diff.mag());
   // Simulating breaking
-  if (diff.mag()>3.0*length)
+  if (diff.mag()>40.0*length)
   {
     broken = true;
     return;

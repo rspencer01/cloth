@@ -1,15 +1,15 @@
 #ifndef SPHERE_H
 #define SPHERE_H
-#include "vector2d.h"
+#include "vector3d.h"
 
 class sphere
 {
   private:
     float radius;
   public:
-    vector2D centre;
-    sphere(vector2D,float);
-    vector2D resolve(vector2D);
+    vector3D centre;
+    sphere(vector3D,float);
+    vector3D resolve(vector3D);
 
 };
 
