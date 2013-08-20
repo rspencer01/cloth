@@ -15,14 +15,12 @@ using namespace std;
 typedef pair<float,float> pff;
 typedef vector<vector<pff> > frame;
 
-int currFrame;
-int width,height;
-vector<vector<pff> > positions;
+frame currFrame;
 FILE* fp;
 
 void openFile()
 {
-  fp = fopen("output.inp","w");
+  fp = fopen("output.inp~","w");
 }
 
 void closeFile()
@@ -37,12 +35,39 @@ void writeHeader()
   fprintf(fp,"%d\n",HEIGHT);
 }
 
+void initialiseFrame()
+{
+  currFrame.clear();
+  for (int i = 0;i<HEIGHT;i++)
+  {
+    vector<pff> tem;
+    for (int j=0;j<WIDTH;j++)
+    {
+      pff t = make_pair(i/float(HEIGHT)-0.5,j/float(WIDTH));
+      tem.push_back(t);
+    }
+    currFrame.push_back(tem);
+  }
+}
+
+void writeFrame(frame x)
+{
+  for (int j = 0;j<HEIGHT;j++)
+    for (int i = 0;i<WIDTH;i++)
+    {
+      fprintf(fp,"%f %f ",x[j][i].first,x[j][i].second);
+    }
+  fprintf(fp,"\n");
+}
+
 int main(int argc, char**argv)
 {
   openFile();
   writeHeader();
+  initialiseFrame();
   for (int i = 0;i<FRAME_COUNT;i++)
   {
+    writeFrame(currFrame);
   }
   closeFile();
 }
