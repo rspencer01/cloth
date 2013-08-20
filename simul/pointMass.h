@@ -7,6 +7,7 @@ class pointMass
   private:
     vector2D velocity;
     vector2D acceleration;
+    vector2D lastPosition;
   public:
     vector2D position;
     pointMass(vector2D);
@@ -14,6 +15,7 @@ class pointMass
     void addForce(vector2D);
     void updatePosition(float);
     void addFriction(float);
+    void updateMomentum(float);
     float x();
     float y();
 };
