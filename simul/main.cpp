@@ -15,8 +15,10 @@ using namespace std;
 typedef pair<float,float> pff;
 typedef vector<vector<pff> > frame;
 
-frame currFrame;
 FILE* fp;
+frame currFrame;
+frame nextFrame;
+frame momenta;
 
 void openFile()
 {
@@ -38,15 +40,21 @@ void writeHeader()
 void initialiseFrame()
 {
   currFrame.clear();
+  momenta.clear();
+  nextFrame.clear();
   for (int i = 0;i<HEIGHT;i++)
   {
     vector<pff> tem;
+    vector<pff> tem2;
     for (int j=0;j<WIDTH;j++)
     {
-      pff t = make_pair(i/float(HEIGHT)-0.5,j/float(WIDTH));
+      pff t = make_pair(i/float(HEIGHT)-0.5,-j/float(WIDTH));
       tem.push_back(t);
+      tem2.push_back(make_pair(0,-0.001));
     }
     currFrame.push_back(tem);
+    nextFrame.push_back(tem);
+    momenta.push_back(tem2);
   }
 }
 
@@ -60,6 +68,25 @@ void writeFrame(frame x)
   fprintf(fp,"\n");
 }
 
+void copyBackFrame()
+{
+  for (int j = 0;j<HEIGHT;j++)
+    for (int i = 0;i<WIDTH;i++)
+      currFrame[j][i]= nextFrame[j][i];
+}
+
+pff add(pff a,pff b)
+{
+  return make_pair(a.first+b.first,a.second+b.second);
+}
+
+void updatePosition()
+{
+  for (int j = 0;j<HEIGHT;j++)
+    for (int i = 1;i<WIDTH;i++)
+      nextFrame[j][i] = add(currFrame[j][i],momenta[j][i]);
+}
+
 int main(int argc, char**argv)
 {
   openFile();
@@ -68,6 +95,8 @@ int main(int argc, char**argv)
   for (int i = 0;i<FRAME_COUNT;i++)
   {
     writeFrame(currFrame);
+    updatePosition();
+    copyBackFrame();
   }
   closeFile();
 }
