@@ -54,10 +54,10 @@ pff getPosition(int x,int y, int f)
 
 void drawLine(pff from, pff to)
 {
-  glLineWidth(0.5);
+  glLineWidth(1.0);
   glBegin(GL_LINES);
-  glVertex3f(from.second, from.first, 0.0);
-  glVertex3f(to.second, to.first, 0);
+  glVertex3f(from.first, from.second, 0.0);
+  glVertex3f(to.first, to.second, 0);
   glEnd();
 }
 
@@ -117,14 +117,14 @@ void display(void)
 	glLoadIdentity();
 
 	for (int i = 0;i<width;i++)
-	{
 		for (int j = 0;j<height-1;j++)
-		{
 			drawLine(getPosition(i,j,currFrame),getPosition(i,j+1,currFrame));
-		}
-	}
-
-	glutSwapBuffers();
+	for (int i = 0;i<width-1;i++)
+		for (int j = 0;j<height;j++)
+			drawLine(getPosition(i,j,currFrame),getPosition(i+1,j,currFrame));
+	
+  
+  glutSwapBuffers();
 
 	clock_t nw = clock();
 	float diff = (((float)nw - (float)lastUpdate) / 1000000.0F ) * 1000;   
