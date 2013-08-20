@@ -2,12 +2,15 @@
 class pointMass
 {
   private:
-    vector2D position;
     vector2D velocity;
     vector2D acceleration;
   public:
+    vector2D position;
     pointMass(vector2D);
     pointMass();
     void addForce(vector2D);
-    void calculatePosition(float);
+    void updatePosition(float);
+    void addFriction(float);
+    float x();
+    float y();
 };

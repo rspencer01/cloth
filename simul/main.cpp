@@ -7,24 +7,23 @@
 #include <utility>
 #include <vector>
 #include "vector2d.h"
+#include "pointMass.h"
 using namespace std;
 
 #define FRAME_COUNT 1000
-#define WIDTH 52
-#define HEIGHT 65
+#define WIDTH 62
+#define HEIGHT 60
 #define POINT_MASS 1 
 #define TIMESTEP 1
 #define K 0.2
 #define FRICTIONAL_CONSTANT 0.01
+#define constraintLength 0.015
 
-typedef vector<vector<vector2D> > frame;
+typedef vector<vector<pointMass> > frame;
+
 
 FILE* fp;
 frame currFrame;
-frame nextFrame;
-frame velocities;
-frame accelerations;
-float constraintLength;
 
 void openFile()
 {
@@ -45,25 +44,21 @@ void writeHeader()
 
 void initialiseFrame()
 {
-  constraintLength = 0.5/HEIGHT;
   currFrame.clear();
-  velocities.clear();
-  nextFrame.clear();
   for (int i = 0;i<HEIGHT;i++)
   {
-    vector<vector2D> tem;
-    vector<vector2D> tem2;
+    float y = 0.9-i*constraintLength;
+    vector<pointMass> tem;
     for (int j=0;j<WIDTH;j++)
     {
-      tem.push_back(vector2D(i/float(HEIGHT)*1.6-0.5*1.6,0.9-j/float(HEIGHT*5)));
-      tem2.push_back(vector2D(0,0));
+      float x = (j-WIDTH/2.0)*constraintLength;
+      tem.push_back(pointMass(vector2D(x,y)));
     }
     currFrame.push_back(tem);
-    nextFrame.push_back(tem);
-    velocities.push_back(tem2);
-    accelerations.push_back(tem2);
   }
-  currFrame[0][HEIGHT-1] = currFrame[0][HEIGHT-1] - vector2D(-0.1,0.1);
+  currFrame[1][1].position = currFrame[1][1].position + vector2D(0.1,0.1);
+  currFrame[1][2].position = currFrame[1][2].position + vector2D(0.1,0.1);
+  currFrame[1][3].position = currFrame[1][3].position + vector2D(0.1,0.1);
 }
 
 void writeFrame(frame x)
@@ -71,67 +66,53 @@ void writeFrame(frame x)
   for (int j = 0;j<HEIGHT;j++)
     for (int i = 0;i<WIDTH;i++)
     {
-      fprintf(fp,"%f %f ",x[j][i].x,x[j][i].y);
+      fprintf(fp,"%f %f ",x[j][i].x(),x[j][i].y());
     }
   fprintf(fp,"\n");
 }
 
-void copyBackFrame()
-{
-  for (int j = 0;j<HEIGHT;j++)
-    for (int i = 0;i<WIDTH;i++)
-      currFrame[j][i]= nextFrame[j][i];
-}
-
 void updatePosition()
 {
-  for (int j = 0;j<HEIGHT;j++)
-    for (int i = 1;i<WIDTH;i++)
-      nextFrame[j][i] = currFrame[j][i]+velocities[j][i]*TIMESTEP;
+  for (int j = 1;j<HEIGHT;j++)
+    for (int i = 0;i<WIDTH;i++)
+      currFrame[j][i].updatePosition(TIMESTEP);
 }
 
 void updateAccelerations()
 {
+  
   // Gravity
-  for (int j = 0;j<HEIGHT;j++)
-    for (int i = 1;i<WIDTH;i++)
-      accelerations[j][i] = vector2D(0,-0.0001);
+  for (int j = 1;j<HEIGHT;j++)
+    for (int i = 0;i<WIDTH;i++)
+      currFrame[j][i].addForce(vector2D(0,-0.0001));
 
   for (int j = 0;j<HEIGHT;j++)
     for (int i = 1;i<WIDTH;i++)
     {
-      vector2D diff = currFrame[j][i]-currFrame[j][i-1];
+      vector2D diff = currFrame[j][i].position-currFrame[j][i-1].position;
       if (diff.mag()>constraintLength)
       {
         diff = diff - diff*(constraintLength/diff.mag());
-        accelerations[j][i] = accelerations[j][i] - diff * K;
-        if (i>0)
-          accelerations[j][i-1] = accelerations[j][i-1] + diff * K;
+        currFrame[j][i].addForce(diff * K * (-1));
+        currFrame[j][i-1].addForce(diff * K);
       }
     }
   for (int j = 1;j<HEIGHT;j++)
     for (int i = 0;i<WIDTH;i++)
     {
-      vector2D diff = currFrame[j][i]-currFrame[j-1][i];
+      vector2D diff = currFrame[j][i].position-currFrame[j-1][i].position;
       if (diff.mag()>constraintLength)
       {
         diff = diff - diff*(constraintLength/diff.mag());
-        accelerations[j][i] = accelerations[j][i] - diff * K;
-        accelerations[j-1][i] = accelerations[j-1][i] + diff * K;
+        currFrame[j][i].addForce(diff * K * (-1));
+        currFrame[j-1][i].addForce(diff * K);
       }
     }
   
   for (int j = 0;j<HEIGHT;j++)
-    for (int i = 1;i<WIDTH;i++)
-      accelerations[j][i] = accelerations[j][i] - velocities[j][i]*FRICTIONAL_CONSTANT;
+    for (int i = 0;i<WIDTH;i++)
+      currFrame[j][i].addFriction(FRICTIONAL_CONSTANT);
 
-}
-
-void updateVelocities()
-{
-  for (int j = 0;j<HEIGHT;j++)
-    for (int i = 1;i<WIDTH;i++)
-      velocities[j][i] = velocities[j][i] + accelerations[j][i]*TIMESTEP;
 }
 
 int main(int argc, char**argv)
@@ -143,9 +124,7 @@ int main(int argc, char**argv)
   {
     writeFrame(currFrame);
     updateAccelerations();
-    updateVelocities();
     updatePosition();
-    copyBackFrame();
   }
   closeFile();
 }

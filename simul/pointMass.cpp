@@ -19,9 +19,24 @@ void pointMass::addForce(vector2D f)
   acceleration = acceleration + f;
 }
 
-void pointMass::calculatePosition(float dt)
+void pointMass::addFriction(float k)
+{
+  addForce(velocity * -k);
+}
+
+void pointMass::updatePosition(float dt)
 {
   velocity = velocity + acceleration * dt;
   position = position + velocity * dt;
   acceleration = vector2D(0,0);
 }
+
+float pointMass::x()
+{
+  return position.x;
+}
+float pointMass::y()
+{
+  return position.y;
+}
+

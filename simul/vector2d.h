@@ -1,3 +1,5 @@
+#ifndef VECTOR2D_H
+#define VECTOR2D_H
 class vector2D
 {
   public:
@@ -11,3 +13,4 @@ class vector2D
     const vector2D operator*(const float &other) const ;
     float mag();
 };
+#endif
