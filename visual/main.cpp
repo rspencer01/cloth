@@ -59,9 +59,6 @@ pff getPosition(int x, int f)
 
 void drawLine(pff from, pff to)
 {
-  if ((min(min(from.first,from.second),min(to.first,to.second))<-1) or (max(max(from.first,from.second),max(to.first,to.second))>1))
-    return;
-
   glLineWidth(1.0);
   glBegin(GL_LINES);
   glVertex3f(from.first, from.second, 0.0);
