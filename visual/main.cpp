@@ -128,7 +128,7 @@ void display(void)
 
 	clock_t nw = clock();
 	float diff = (((float)nw - (float)lastUpdate) / 1000000.0F ) * 1000;   
-	if (diff>1000.0/24)
+	if (diff>1.0/24)
 	{
 		currFrame++;
 		currFrame%=frameCount;
