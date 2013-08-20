@@ -8,4 +8,5 @@ class vector2D
     vector2D& operator=(const vector2D &rhs);
     const vector2D operator+(const vector2D &other) const ;
     const vector2D operator*(const float &other) const ;
+    float mag();
 };

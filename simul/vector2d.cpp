@@ -1,4 +1,6 @@
 #include "vector2d.h"
+#include "math.h"
+
 vector2D::vector2D()
 {
   x = y = 0.0;
@@ -26,4 +28,8 @@ const vector2D vector2D::operator*(const float &other) const
   result.x *= other;     
   result.y *= other;
   return result;
+}
+float vector2D::mag()
+{
+  return sqrt(x*x+y*y);
 }
