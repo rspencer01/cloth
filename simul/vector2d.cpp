@@ -22,6 +22,13 @@ const vector2D vector2D::operator+(const vector2D &other) const
   result.y = y + other.y;
   return result;
 }
+const vector2D vector2D::operator-(const vector2D &other) const 
+{
+  vector2D result = *this;
+  result.x = x - other.x;
+  result.y = y - other.y;
+  return result;
+}
 const vector2D vector2D::operator*(const float &other) const 
 {
   vector2D result = *this; 
