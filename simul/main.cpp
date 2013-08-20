@@ -12,11 +12,11 @@
 #include "sphere.h"
 using namespace std;
 
-#define FRAME_COUNT 1000
+#define FRAME_COUNT 2000
 #define WIDTH 40
 #define HEIGHT 40
 #define POINT_MASS 1 
-#define TIMESTEP 0.1
+#define TIMESTEP 0.5
 #define K 0.2
 #define FRICTIONAL_CONSTANT 0.01
 #define constraintLength 0.02
@@ -27,7 +27,7 @@ typedef vector<vector<pointMass> > frame;
 FILE* fp;
 frame currFrame;
 vector<constraint> springs;
-sphere sph (vector2D(0,0.1),0.1);
+sphere sph (vector2D(-1,0.4),0.1);
 
 void openFile()
 {
@@ -60,11 +60,6 @@ void initialiseFrame()
     }
     currFrame.push_back(tem);
   }
-/*
-  currFrame[1][1].position = currFrame[1][1].position + vector2D(0.1,0.1);
-  currFrame[1][2].position = currFrame[1][2].position + vector2D(0.1,0.1);
-  currFrame[1][3].position = currFrame[1][3].position + vector2D(0.1,0.1);
-  */
 }
 
 void initialiseSprings()
@@ -145,6 +140,7 @@ int main(int argc, char**argv)
     resolveSphere();
     // We do this because the sphere may have thown off some things
     updateVelocities();
+    sph.centre = sph.centre + vector2D(0.004,0.00001);
   }
   closeFile();
 }

@@ -5,9 +5,9 @@
 class sphere
 {
   private:
-    vector2D centre;
     float radius;
   public:
+    vector2D centre;
     sphere(vector2D,float);
     vector2D resolve(vector2D);
 
