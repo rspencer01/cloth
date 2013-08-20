@@ -20,8 +20,9 @@ typedef vector<vector<pff> > frame;
 
 int frameCount;
 int currFrame;
-int width,height;
+int numPoints,numLinks;
 vector<vector<pff> > positions;
+vector<pair<int,int> > links;
 
 clock_t lastUpdate;
 
@@ -29,13 +30,18 @@ void loadData(string filePath)
 {
 	FILE* fp = fopen(filePath.c_str(),"r");
 	fscanf(fp,"%d",&frameCount);
-	fscanf(fp,"%d",&width);
-	fscanf(fp,"%d",&height);
+	fscanf(fp,"%d",&numPoints);
+	fscanf(fp,"%d",&numLinks);
+  for (int i = 0;i<numLinks;i++)
+  {
+    pair<int,int> t;
+    fscanf(fp,"%d %d\n",&t.first,&t.second);
+    links.push_back(t);
+  }
 	for (int i = 0;i<frameCount;i++)
 	{
 		vector<pff> temp;
-		temp.clear();
-		for (int h = 0;h<height*width;h++)
+		for (int h = 0;h<numPoints;h++)
 		{
 			pff t = make_pair(-1,-1);
 			fscanf(fp,"%f %f ",&t.first,&t.second);
@@ -46,9 +52,9 @@ void loadData(string filePath)
 	fclose(fp);
 }
 
-pff getPosition(int x,int y, int f)
+pff getPosition(int x, int f)
 {
-  return positions[f][y*width+x];
+  return positions[f][x];
 }
 
 void drawLine(pff from, pff to)
@@ -73,8 +79,8 @@ int main(int argc, char**argv)
 	string inpFlName (argv[1]);
 	loadData(inpFlName);
 	printf("Number of frames : %d\n",frameCount);
-	printf("Size of grid: %dx%d\n",width,height);
-
+	printf("Number of points : %d\n",numPoints);
+	printf("Number of links  : %d\n",numLinks);
 	srand(0);
 	
 	glutInit(&argc,argv);
@@ -118,12 +124,8 @@ void display(void)
 
 	glLoadIdentity();
 
-	for (int i = 0;i<width;i++)
-		for (int j = 0;j<height-1;j++)
-			drawLine(getPosition(i,j,currFrame),getPosition(i,j+1,currFrame));
-	for (int i = 0;i<width-1;i++)
-		for (int j = 0;j<height;j++)
-			drawLine(getPosition(i,j,currFrame),getPosition(i+1,j,currFrame));
+	for (int i = 0;i<numLinks;i++)
+			drawLine(getPosition(links[i].first,currFrame),getPosition(links[i].second,currFrame));
 	
   
   glutSwapBuffers();
@@ -135,7 +137,8 @@ void display(void)
 		currFrame++;
 		currFrame%=frameCount;
 		lastUpdate = nw;
-		printf("%d\n",currFrame);
+    if (currFrame%240==0)
+  		printf("%d\n",currFrame);
 	}
 }
 

@@ -1,9 +1,10 @@
 All inputs should follow the following format:
 
 line 1   :  Number of frames
-line 2   :  Rectangle width
-line 3   :  Rectangle height
-line 4.. :  Data, space separated.  X then Y for each point
+line 2   :  Number of points
+line 3   :  Number of lines
+line 4   :  Pairs of integers, (a,b) indicating that a is connected to b
+line 5.. :  Data, space separated.  X then Y for each point
 
 All data should be in the range [-1 , 1]
 Any value outside of this range will be considered null, and the point will not be drawn (use this to destroy parts of the cloth)
