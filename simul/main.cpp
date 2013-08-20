@@ -8,6 +8,7 @@
 #include <vector>
 #include "vector2d.h"
 #include "pointMass.h"
+#include "constraint.h"
 using namespace std;
 
 #define FRAME_COUNT 1000
@@ -24,6 +25,7 @@ typedef vector<vector<pointMass> > frame;
 
 FILE* fp;
 frame currFrame;
+vector<constraint> springs;
 
 void openFile()
 {
@@ -56,9 +58,26 @@ void initialiseFrame()
     }
     currFrame.push_back(tem);
   }
+
   currFrame[1][1].position = currFrame[1][1].position + vector2D(0.1,0.1);
   currFrame[1][2].position = currFrame[1][2].position + vector2D(0.1,0.1);
   currFrame[1][3].position = currFrame[1][3].position + vector2D(0.1,0.1);
+}
+
+void initialiseSprings()
+{
+  for (int i = 1;i<HEIGHT;i++)
+    for (int j = 0;j<WIDTH;j++)
+      springs.push_back(constraint(&currFrame[i][j],
+                                   &currFrame[i-1][j],
+                                   constraintLength,
+                                   K));
+   for (int i = 0;i<HEIGHT;i++)
+    for (int j = 1;j<WIDTH;j++)
+      springs.push_back(constraint(&currFrame[i][j],
+                                   &currFrame[i][j-1],
+                                   constraintLength,
+                                   K));
 }
 
 void writeFrame(frame x)
@@ -86,28 +105,8 @@ void updateAccelerations()
     for (int i = 0;i<WIDTH;i++)
       currFrame[j][i].addForce(vector2D(0,-0.0001));
 
-  for (int j = 0;j<HEIGHT;j++)
-    for (int i = 1;i<WIDTH;i++)
-    {
-      vector2D diff = currFrame[j][i].position-currFrame[j][i-1].position;
-      if (diff.mag()>constraintLength)
-      {
-        diff = diff - diff*(constraintLength/diff.mag());
-        currFrame[j][i].addForce(diff * K * (-1));
-        currFrame[j][i-1].addForce(diff * K);
-      }
-    }
-  for (int j = 1;j<HEIGHT;j++)
-    for (int i = 0;i<WIDTH;i++)
-    {
-      vector2D diff = currFrame[j][i].position-currFrame[j-1][i].position;
-      if (diff.mag()>constraintLength)
-      {
-        diff = diff - diff*(constraintLength/diff.mag());
-        currFrame[j][i].addForce(diff * K * (-1));
-        currFrame[j-1][i].addForce(diff * K);
-      }
-    }
+  for (int i = 0;i<springs.size();i++)
+    springs[i].enforce();
   
   for (int j = 0;j<HEIGHT;j++)
     for (int i = 0;i<WIDTH;i++)
@@ -120,6 +119,7 @@ int main(int argc, char**argv)
   openFile();
   writeHeader();
   initialiseFrame();
+  initialiseSprings();
   for (int i = 0;i<FRAME_COUNT;i++)
   {
     writeFrame(currFrame);

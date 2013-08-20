@@ -1,3 +1,6 @@
+#ifndef POINTMASS_H
+#define POINTMASS_H
+
 #include "vector2d.h"
 class pointMass
 {
@@ -14,3 +17,5 @@ class pointMass
     float x();
     float y();
 };
+
+#endif
