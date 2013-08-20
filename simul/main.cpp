@@ -27,7 +27,7 @@ typedef vector<vector<pointMass> > frame;
 FILE* fp;
 frame currFrame;
 vector<constraint> springs;
-sphere sph (vector3D(-1,-0.1),0.1);
+sphere sph (vector3D(-1,-0.1,0.05),0.1);
 
 void openFile()
 {
@@ -64,7 +64,7 @@ void initialiseFrame()
     for (int j=0;j<WIDTH;j++)
     {
       float x = (j-WIDTH/2.0)*constraintLength;
-      tem.push_back(pointMass(vector3D(x,y)));
+      tem.push_back(pointMass(vector3D(x,y,0)));
     }
     currFrame.push_back(tem);
   }
@@ -109,7 +109,7 @@ void updateAccelerations()
   // Gravity
   for (int j = 1;j<HEIGHT;j++)
     for (int i = 0;i<WIDTH;i++)
-      currFrame[j][i].addForce(vector3D(0,-0.0001));
+      currFrame[j][i].addForce(vector3D(0,-0.0001,0));
 
   for (int i = 0;i<springs.size();i++)
     springs[i].enforce();
@@ -148,7 +148,7 @@ int main(int argc, char**argv)
     resolveSphere();
     // We do this because the sphere may have thown off some things
     updateVelocities();
-    sph.centre = sph.centre + vector3D(0.005,0.001);
+    sph.centre = sph.centre + vector3D(0.005,0.001,0);
   }
   closeFile();
 }

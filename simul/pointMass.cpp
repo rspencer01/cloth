@@ -4,16 +4,16 @@ pointMass::pointMass(vector3D ps)
 {
   position = ps;
   lastPosition = position;
-  velocity = vector3D(0,0);
-  acceleration = vector3D(0,0);
+  velocity = vector3D(0,0,0);
+  acceleration = vector3D(0,0,0);
 }
 
 pointMass::pointMass()
 {
-  position = vector3D(0,0);
+  position = vector3D(0,0,0);
   lastPosition = position;
-  velocity = vector3D(0,0);
-  acceleration = vector3D(0,0);
+  velocity = vector3D(0,0,0);
+  acceleration = vector3D(0,0,0);
 }
 
 void pointMass::addForce(vector3D f)
@@ -30,7 +30,7 @@ void pointMass::updatePosition(float dt)
 {
   velocity = velocity + acceleration * dt;
   position = position + velocity * dt;
-  acceleration = vector3D(0,0);
+  acceleration = vector3D(0,0,0);
 }
 
 float pointMass::x()
