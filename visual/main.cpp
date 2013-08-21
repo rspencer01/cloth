@@ -23,8 +23,19 @@ int currFrame;
 int numPoints,numLinks;
 vector<vector<pff> > positions;
 vector<pair<int,int> > links;
+bool* keyStates = new bool[256];
+float psi = 0;
+float phi = 3.1415/2;
+float r = 2;
 
 clock_t lastUpdate;
+
+void keyPressed(unsigned char,int,int);
+void keyUp(unsigned char, int, int);
+void keyOperations(void);
+float DownlookDist = 0;
+int speed = 1;
+void renderCamera(void);
 
 void loadData(string filePath)
 {
@@ -98,6 +109,9 @@ int main(int argc, char**argv)
 	glutDisplayFunc(display);
 	glutIdleFunc(display);
 	glutReshapeFunc(reshape);
+  glutKeyboardFunc(keyPressed);
+  glutKeyboardUpFunc(keyUp);
+
 
 	currFrame = 0;
 	lastUpdate = clock();
@@ -107,19 +121,15 @@ int main(int argc, char**argv)
 
 void display(void)
 {
+  keyOperations();
 	glClearColor (1.f,0.f,1.f,0.f);
 	
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	
-	glMatrixMode(GL_PROJECTION);
-
-	glLoadIdentity();
-
-	glOrtho(-1,1,-1,1,-1,1);
-	
 	glMatrixMode(GL_MODELVIEW);
-
 	glLoadIdentity();
+  renderCamera();
+
 
 	for (int i = 0;i<numLinks;i++)
 			drawLine(getPosition(links[i].first,currFrame),getPosition(links[i].second,currFrame));
@@ -145,7 +155,36 @@ void reshape(int width,int height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//FOV, Aspect Ratio, Near pane and far plane
-	gluPerspective(60,(GLfloat)width/(GLfloat)height,1.0,1500.0);
+	gluPerspective(60,(GLfloat)width/(GLfloat)height,0.1,1500.0);
 	glMatrixMode(GL_MODELVIEW);
 }
+void keyPressed(unsigned char key,int x,int y)
+{
+	keyStates[key] = true;
+}
 
+void keyUp(unsigned char key,int x,int y)
+{
+	keyStates[key] = false;
+}
+
+void keyOperations(void)
+{
+	if (keyStates['a'])
+    phi -= 0.01;
+	if (keyStates['d'])
+    phi += 0.01;
+	if (keyStates['w'])
+    psi += 0.01;
+	if (keyStates['s'])
+    psi -= 0.01;
+  if (keyStates['e'])
+    r += 0.01;
+  if (keyStates['q'])
+    r -= 0.01;
+}
+
+void renderCamera()
+{
+  gluLookAt(r*cos(phi)*cos(psi),r*sin(psi),r*sin(phi),0,0,0,0,1,0);
+}
