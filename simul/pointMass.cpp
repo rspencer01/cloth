@@ -42,6 +42,11 @@ float pointMass::y()
   return position.y;
 }
 
+float pointMass::z()
+{
+  return position.z;
+}
+
 void pointMass::updateMomentum(float dt)
 {
   velocity = (position-lastPosition)*(1.0/dt);

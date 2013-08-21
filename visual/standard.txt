@@ -4,6 +4,6 @@ line 1   :  Number of frames
 line 2   :  Number of points
 line 3   :  Number of lines
 line 4   :  Pairs of integers, (a,b) indicating that a is connected to b
-line 5.. :  Data, space separated.  X then Y for each point
+line 5.. :  Data, space separated.  X, Y, then Y for each point
 
 All data should be in the range [-1 , 1] to be viewed

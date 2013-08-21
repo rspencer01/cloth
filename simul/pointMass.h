@@ -18,6 +18,7 @@ class pointMass
     void updateMomentum(float);
     float x();
     float y();
+    float z();
 };
 
 #endif

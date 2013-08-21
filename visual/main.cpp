@@ -15,13 +15,13 @@ using namespace std;
 void display(void);
 void reshape(int,int);
 
-typedef pair<float,float> pff;
+typedef pair<pair<float,float>, float> pff;
 typedef vector<vector<pff> > frame;
 
 int frameCount;
 int currFrame;
 int numPoints,numLinks;
-vector<vector<pff> > positions;
+vector<vector<pff > > positions;
 vector<pair<int,int> > links;
 bool* keyStates = new bool[256];
 float psi = 0;
@@ -54,8 +54,8 @@ void loadData(string filePath)
 		vector<pff> temp;
 		for (int h = 0;h<numPoints;h++)
 		{
-			pff t = make_pair(-1,-1);
-			fscanf(fp,"%f %f ",&t.first,&t.second);
+			pff t = make_pair(make_pair(-1,-1),-1);
+			fscanf(fp,"%f %f %f",&t.first.first,&t.first.second, &t.second);
 			temp.push_back(t);
 		}
 		positions.push_back(temp);
@@ -72,8 +72,8 @@ void drawLine(pff from, pff to)
 {
   glLineWidth(1.0);
   glBegin(GL_LINES);
-  glVertex3f(from.first, from.second, 0.0);
-  glVertex3f(to.first, to.second, 0);
+  glVertex3f(from.first.first, from.first.second, from.second);
+  glVertex3f(to.first.first, to.first.second, to.second);
   glEnd();
 }
 

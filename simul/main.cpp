@@ -91,7 +91,7 @@ void writeFrame(frame x)
   for (int j = 0;j<HEIGHT;j++)
     for (int i = 0;i<WIDTH;i++)
     {
-      fprintf(fp,"%f %f ",x[j][i].x(),x[j][i].y());
+      fprintf(fp,"%f %f %f",x[j][i].x(),x[j][i].y(),x[j][i].z());
     }
   fprintf(fp,"\n");
 }
