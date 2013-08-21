@@ -10,20 +10,21 @@ constraint::constraint(pointMass* a, pointMass* b, float d, float _k)
   broken = false;
 }
 
-void constraint::enforce()
+bool constraint::enforce()
 {
   if (broken)
-    return;
+    return false;
   vector3D diff = pointA->position-pointB->position;
   if (diff.mag()<length)
-    return;
+    return false;
   diff = diff - diff * (length/diff.mag());
   // Simulating breaking
-  if (diff.mag()>40.0*length)
+  if (diff.mag()>1.5*length)
   {
     broken = true;
-    return;
+    return true;
   }
   pointA->addForce(diff * - k);
   pointB->addForce(diff *   k);
+  return false;
 }

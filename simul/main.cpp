@@ -12,11 +12,11 @@
 #include "sphere.h"
 using namespace std;
 
-#define FRAME_COUNT 1000
+#define FRAME_COUNT 1500
 #define WIDTH 40
 #define HEIGHT 40
 #define POINT_MASS 1 
-#define TIMESTEP 0.5
+#define TIMESTEP 0.7
 #define K 0.2
 #define FRICTIONAL_CONSTANT 0.01
 #define constraintLength 0.02
@@ -28,8 +28,9 @@ FILE* fp;
 frame currFrame;
 vector<constraint> springs;
 sphere sph1 (vector3D(-1,-0.1,0.05),0.1);
-sphere sph2 (vector3D(0,0.3,-1),0.1);
+sphere sph2 (vector3D(0,1.3,-1),0.1);
 
+vector<int> toDestroyNext;
 
 void openFile()
 {
@@ -95,7 +96,12 @@ void writeFrame(frame x)
     {
       fprintf(fp,"%f %f %f",x[j][i].x(),x[j][i].y(),x[j][i].z());
     }
+  fprintf(fp,"\n%d ",toDestroyNext.size());
+  for (int j = 0;j<toDestroyNext.size();j++)
+    fprintf(fp,"%d ",toDestroyNext[j]);
   fprintf(fp,"\n");
+  toDestroyNext.clear();
+
 }
 
 void updatePosition()
@@ -114,7 +120,8 @@ void updateAccelerations()
       currFrame[j][i].addForce(vector3D(0,-0.0001,0));
 
   for (int i = 0;i<springs.size();i++)
-    springs[i].enforce();
+    if (springs[i].enforce())
+      toDestroyNext.push_back(i);
   
   for (int j = 0;j<HEIGHT;j++)
     for (int i = 0;i<WIDTH;i++)
@@ -155,7 +162,7 @@ int main(int argc, char**argv)
     // We do this because the sphere may have thown off some things
     updateVelocities();
     sph1.centre = sph1.centre + vector3D(0.005,0.001,0);
-    sph2.centre = sph2.centre + vector3D(0,0,0.01);
+    sph2.centre = sph2.centre + vector3D(0,-0.01,0.01);
   }
   closeFile();
 }

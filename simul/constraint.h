@@ -13,6 +13,6 @@ class constraint
     bool broken;
   public:
     constraint(pointMass*,pointMass*,float,float);
-    void enforce();
+    bool enforce();
 };
 #endif
