@@ -23,6 +23,8 @@ int currFrame;
 int numPoints,numLinks;
 vector<vector<pff > > positions;
 vector<pair<int,int> > links;
+vector<bool> linksToNotDraw;
+vector<vector<int> > linkDeletions;
 bool* keyStates = new bool[256];
 float psi = 0;
 float phi = 3.1415/2;
@@ -43,11 +45,13 @@ void loadData(string filePath)
 	fscanf(fp,"%d",&frameCount);
 	fscanf(fp,"%d",&numPoints);
 	fscanf(fp,"%d",&numLinks);
+  linksToNotDraw.resize(numLinks);
   for (int i = 0;i<numLinks;i++)
   {
     pair<int,int> t;
     fscanf(fp,"%d %d\n",&t.first,&t.second);
     links.push_back(t);
+    linksToNotDraw[i] = false;
   }
 	for (int i = 0;i<frameCount;i++)
 	{
@@ -59,7 +63,15 @@ void loadData(string filePath)
 			temp.push_back(t);
 		}
 		positions.push_back(temp);
+    vector<int> toDel;
+    int numD;
+    fscanf(fp,"%d ",&numD);
+    toDel.resize(numD);
+		for (int j = 0;j<numD;j++)
+      fscanf(fp,"%d",&toDel[j]);
+    linkDeletions.push_back(toDel);
 	}
+
 	fclose(fp);
 }
 
@@ -75,6 +87,12 @@ void drawLine(pff from, pff to)
   glVertex3f(from.first.first, from.first.second, from.second);
   glVertex3f(to.first.first, to.first.second, to.second);
   glEnd();
+}
+
+void updateDeletedLinks(int frameNumber)
+{
+  for (int i = 0;i<linkDeletions[frameNumber].size();i++)
+    linksToNotDraw[linkDeletions[frameNumber][i]] = true;
 }
 
 int main(int argc, char**argv)
@@ -130,8 +148,10 @@ void display(void)
 	glLoadIdentity();
   renderCamera();
 
+  updateDeletedLinks(currFrame);
 
 	for (int i = 0;i<numLinks;i++)
+    if (linksToNotDraw[i] == false)
 			drawLine(getPosition(links[i].first,currFrame),getPosition(links[i].second,currFrame));
 	
   
@@ -143,6 +163,9 @@ void display(void)
 	{
 		currFrame++;
 		currFrame%=frameCount;
+    if (currFrame==0)
+      for (int i = 0;i<numLinks;i++)
+        linksToNotDraw[i] = false;
 		lastUpdate = nw;
     if (currFrame%240==0)
   		printf("%d\n",currFrame);
