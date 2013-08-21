@@ -12,7 +12,7 @@
 #include "sphere.h"
 using namespace std;
 
-#define FRAME_COUNT 2000
+#define FRAME_COUNT 1000
 #define WIDTH 40
 #define HEIGHT 40
 #define POINT_MASS 1 
@@ -27,7 +27,9 @@ typedef vector<vector<pointMass> > frame;
 FILE* fp;
 frame currFrame;
 vector<constraint> springs;
-sphere sph (vector3D(-1,-0.1,0.05),0.1);
+sphere sph1 (vector3D(-1,-0.1,0.05),0.1);
+sphere sph2 (vector3D(0,0.3,-1),0.1);
+
 
 void openFile()
 {
@@ -124,7 +126,11 @@ void resolveSphere()
 {
   for (int j = 0;j<HEIGHT;j++)
     for (int i = 0;i<WIDTH;i++)
-      currFrame[j][i].position = sph.resolve(currFrame[j][i].position);
+    {
+      currFrame[j][i].position = sph1.resolve(currFrame[j][i].position);
+      currFrame[j][i].position = sph2.resolve(currFrame[j][i].position);
+    }
+
 } 
 
 void updateVelocities()
@@ -148,7 +154,8 @@ int main(int argc, char**argv)
     resolveSphere();
     // We do this because the sphere may have thown off some things
     updateVelocities();
-    sph.centre = sph.centre + vector3D(0.005,0.001,0);
+    sph1.centre = sph1.centre + vector3D(0.005,0.001,0);
+    sph2.centre = sph2.centre + vector3D(0,0,0.01);
   }
   closeFile();
 }
